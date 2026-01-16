@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>terminalai - AI-powered terminal commands</title>
+  <meta name="description" content="Type natural language, get shell commands. Free, open-source AI terminal assistant.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0d1117;
+      --bg-secondary: #161b22;
+      --text: #e6edf3;
+      --text-muted: #7d8590;
+      --accent: #58a6ff;
+      --green: #3fb950;
+      --purple: #a371f7;
+      --border: #30363d;
+    }
+
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    header {
+      text-align: center;
+      padding: 4rem 0 3rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    h1 .accent {
+      color: var(--accent);
+    }
+
+    .tagline {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+
+    .terminal {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 2rem 0;
+    }
+
+    .terminal-header {
+      background: var(--border);
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .terminal-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .terminal-dot.red { background: #ff5f56; }
+    .terminal-dot.yellow { background: #ffbd2e; }
+    .terminal-dot.green { background: #27c93f; }
+
+    .terminal-body {
+      padding: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    .terminal-line {
+      margin-bottom: 0.5rem;
+    }
+
+    .prompt {
+      color: var(--green);
+    }
+
+    .command {
+      color: var(--text);
+    }
+
+    .output {
+      color: var(--text-muted);
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 1.2em;
+      background: var(--accent);
+      animation: blink 1s infinite;
+      vertical-align: text-bottom;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 3rem 0;
+    }
+
+    .feature {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+
+    .feature h3 {
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .feature p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .install {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    .install h2 {
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+
+    .install-code {
+      background: var(--bg);
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+
+    .install-code code {
+      color: var(--green);
+    }
+
+    .install-code .comment {
+      color: var(--text-muted);
+    }
+
+    .buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin: 2rem 0;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    .btn-primary:hover {
+      background: #79b8ff;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--text-muted);
+    }
+
+    footer {
+      text-align: center;
+      padding: 3rem 0;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    .examples {
+      margin: 3rem 0;
+    }
+
+    .examples h2 {
+      margin-bottom: 1.5rem;
+      font-size: 1.2rem;
+      text-align: center;
+    }
+
+    .example-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .example {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+    }
+
+    .example-query {
+      color: var(--purple);
+      margin-bottom: 0.25rem;
+      font-size: 0.85rem;
+    }
+
+    .example-result {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>terminal<span class="accent">ai</span></h1>
+      <p class="tagline">Type natural language. Get shell commands.</p>
+      <div class="buttons">
+        <a href="https://github.com/eibrahim/terminalai" class="btn btn-primary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          View on GitHub
+        </a>
+        <a href="https://www.npmjs.com/package/terminalai" class="btn btn-secondary">
+          npm install
+        </a>
+      </div>
+    </header>
+
+    <div class="terminal">
+      <div class="terminal-header">
+        <span class="terminal-dot red"></span>
+        <span class="terminal-dot yellow"></span>
+        <span class="terminal-dot green"></span>
+      </div>
+      <div class="terminal-body">
+        <div class="terminal-line">
+          <span class="prompt">~ $</span>
+          <span class="command"> ai find all jpg files larger than 1mb</span>
+        </div>
+        <div class="terminal-line">
+          <span class="output">find . -name "*.jpg" -size +1M</span>
+        </div>
+        <div class="terminal-line" style="margin-top: 1rem;">
+          <span class="prompt">~ $</span>
+          <span class="command"> ai show what's using port 3000</span>
+        </div>
+        <div class="terminal-line">
+          <span class="output">lsof -i :3000</span>
+        </div>
+        <div class="terminal-line" style="margin-top: 1rem;">
+          <span class="prompt">~ $</span>
+          <span class="cursor"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feature">
+        <h3>$ Natural Language</h3>
+        <p>Just describe what you want in plain English. No need to remember complex syntax.</p>
+      </div>
+      <div class="feature">
+        <h3>$ Pre-filled Commands</h3>
+        <p>Commands appear in your terminal ready to edit. Review before you execute.</p>
+      </div>
+      <div class="feature">
+        <h3>$ Free & Open Source</h3>
+        <p>Uses free AI models via OpenRouter. MIT licensed. No subscription required.</p>
+      </div>
+      <div class="feature">
+        <h3>$ Multi-Shell Support</h3>
+        <p>Works with Zsh, Bash, and Fish. Full command-line pre-fill on Zsh and Fish.</p>
+      </div>
+    </div>
+
+    <div class="install">
+      <h2>Quick Install</h2>
+      <div class="install-code">
+        <code>
+          <span class="comment"># Install globally</span><br>
+          npm install -g terminalai<br><br>
+          <span class="comment"># Set up shell integration</span><br>
+          terminalai setup<br><br>
+          <span class="comment"># Start using it</span><br>
+          ai find all python files modified today
+        </code>
+      </div>
+    </div>
+
+    <div class="examples">
+      <h2>Example Commands</h2>
+      <div class="example-grid">
+        <div class="example">
+          <div class="example-query">ai count lines in all js files</div>
+          <div class="example-result">find . -name "*.js" -exec wc -l {} +</div>
+        </div>
+        <div class="example">
+          <div class="example-query">ai show disk usage by folder</div>
+          <div class="example-result">du -sh */ | sort -hr</div>
+        </div>
+        <div class="example">
+          <div class="example-query">ai find text "TODO" in python files</div>
+          <div class="example-result">grep -r "TODO" --include="*.py" .</div>
+        </div>
+        <div class="example">
+          <div class="example-query">ai compress this folder to zip</div>
+          <div class="example-result">zip -r archive.zip .</div>
+        </div>
+        <div class="example">
+          <div class="example-query">ai show git commits from last week</div>
+          <div class="example-result">git log --since="1 week ago"</div>
+        </div>
+        <div class="example">
+          <div class="example-query">ai kill process on port 8080</div>
+          <div class="example-result">lsof -ti:8080 | xargs kill -9</div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>Built by <a href="https://x.com/eibrahim">Emad Ibrahim</a></p>
+      <p style="margin-top: 0.5rem;">
+        <a href="https://github.com/eibrahim/terminalai">GitHub</a> ·
+        <a href="https://www.npmjs.com/package/terminalai">npm</a>
+      </p>
+    </footer>
+  </div>
+</body>
+</html>
