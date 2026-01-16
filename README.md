@@ -144,9 +144,11 @@ function ai() {
 - The AI avoids destructive commands by default
 - You can edit any generated command before running
 
-## Author
+## More Free Tools
 
-Developed by [Emad Ibrahim](https://x.com/eibrahim)
+I build free developer tools. Follow me on X to get notified about new releases:
+
+**[@eibrahim](https://x.com/eibrahim)**
 
 ## License
 

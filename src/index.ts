@@ -72,6 +72,8 @@ Environment variables:
   TERMINALAI_SHELL      Override detected shell (zsh, bash, fish)
 
 Config file: ~/.config/terminalai/config.json
+
+I build free dev tools. Follow for more: https://x.com/eibrahim
 `);
     return;
   }
