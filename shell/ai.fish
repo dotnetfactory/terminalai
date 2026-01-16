@@ -3,9 +3,14 @@
 
 function ai
   if test (count $argv) -eq 0
-    echo "Usage: ai <natural language query>"
-    echo "Example: ai find all jpg files"
-    return 1
+    terminalai --help
+    return 0
+  end
+  # Pass through subcommands directly (not captured)
+  switch $argv[1]
+    case model setup --help -h
+      terminalai $argv
+      return $status
   end
   set cmd (terminalai $argv)
   if test -n "$cmd"

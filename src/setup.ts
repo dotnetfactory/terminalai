@@ -10,10 +10,15 @@ const SHELL_CONFIGS: Record<string, { file: string; code: string }> = {
 # terminalai - AI command generator
 function ai() {
   if [[ -z "$*" ]]; then
-    echo "Usage: ai <natural language query>"
-    echo "Example: ai find all jpg files"
-    return 1
+    terminalai --help
+    return 0
   fi
+  case "$1" in
+    model|setup|--help|-h)
+      terminalai "$@"
+      return $?
+      ;;
+  esac
   local cmd
   cmd=$(terminalai "$*")
   if [[ -n "$cmd" ]]; then
@@ -28,14 +33,18 @@ function ai() {
 # terminalai - AI command generator
 function ai() {
   if [[ -z "$*" ]]; then
-    echo "Usage: ai <natural language query>"
-    echo "Example: ai find all jpg files"
-    return 1
+    terminalai --help
+    return 0
   fi
+  case "$1" in
+    model|setup|--help|-h)
+      terminalai "$@"
+      return $?
+      ;;
+  esac
   local cmd
   cmd=$(terminalai "$*")
   if [[ -n "$cmd" ]]; then
-    # Add to history and print for manual copy
     history -s "$cmd"
     echo "$cmd"
     echo "Command added to history. Press Up arrow or copy to execute."
@@ -49,9 +58,13 @@ function ai() {
 # terminalai - AI command generator
 function ai
   if test (count $argv) -eq 0
-    echo "Usage: ai <natural language query>"
-    echo "Example: ai find all jpg files"
-    return 1
+    terminalai --help
+    return 0
+  end
+  switch $argv[1]
+    case model setup --help -h
+      terminalai $argv
+      return $status
   end
   set cmd (terminalai $argv)
   if test -n "$cmd"
@@ -146,7 +159,7 @@ export async function runSetup(): Promise<void> {
   }
 
   console.log("\nSetup complete!\n");
-  console.log("To start using terminalai, either:");
+  console.log("To start using ai, either:");
   console.log("  1. Open a new terminal window, or");
   console.log(`  2. Run: source ~/${SHELL_CONFIGS[detectedShell].file}\n`);
   console.log("Then try: ai find all jpg files\n");

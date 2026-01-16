@@ -20,24 +20,23 @@ find . -name "*.jpg" -size +1M
 # Install globally
 npm install -g terminalai
 
-# Get a free API key from OpenRouter (takes 30 seconds)
-# https://openrouter.ai/keys
-export OPENROUTER_API_KEY="your-key-here"
-
-# Set up shell integration
+# Set up shell integration (creates the 'ai' command)
 terminalai setup
+
+# Restart your terminal or run: source ~/.zshrc
 ```
+
+On first run, you'll be prompted for a free API key from [OpenRouter](https://openrouter.ai/keys). The key is saved to `~/.config/terminalai/config.json`.
 
 Or try it without installing:
 
 ```bash
-export OPENROUTER_API_KEY="your-key-here"
 npx terminalai "find all jpg files"
 ```
 
 ## Usage
 
-After running `terminalai setup`, use the `ai` command:
+After setup, use the `ai` command:
 
 ```bash
 # Find files
@@ -68,23 +67,40 @@ The generated command appears in your terminal ready to execute. Press Enter to 
 
 ## Configuration
 
+### API Key
+
+On first run, terminalai will prompt you for an API key and save it automatically.
+
+Get a free key from [OpenRouter](https://openrouter.ai/keys) (takes 30 seconds). The free tier is sufficient for personal use.
+
+### Model Selection
+
+On first run, you'll be prompted to select a model. You can change it anytime:
+
+```bash
+# Interactive model selection
+ai model
+
+# Set a specific model directly
+ai model anthropic/claude-sonnet-4
+```
+
+**Available free models:**
+- `mistralai/devstral-2512:free` - Coding-focused (recommended)
+- `deepseek/deepseek-r1-0528:free` - Strong reasoning
+- `meta-llama/llama-3.3-70b-instruct:free` - General purpose
+
+Browse all models at: https://openrouter.ai/models
+
 ### Environment Variables
 
 | Variable | Description |
 |----------|-------------|
-| `OPENROUTER_API_KEY` | **Required.** Free API key from OpenRouter |
+| `OPENROUTER_API_KEY` | Override saved API key |
+| `TERMINALAI_MODEL` | Override saved model |
 | `TERMINALAI_SHELL` | Override detected shell (zsh, bash, fish) |
 
-### API Key
-
-Get a free API key from [OpenRouter](https://openrouter.ai/keys) (takes 30 seconds):
-
-```bash
-# Add to your shell profile (~/.zshrc, ~/.bashrc, etc.)
-export OPENROUTER_API_KEY="your-key-here"
-```
-
-The free tier is sufficient for personal use. OpenRouter offers free access to models like Llama and Mistral.
+Config is stored at: `~/.config/terminalai/config.json`
 
 ## Shell Support
 
@@ -127,6 +143,10 @@ function ai() {
 - Commands are **never auto-executed** - you always review first
 - The AI avoids destructive commands by default
 - You can edit any generated command before running
+
+## Author
+
+Developed by [Emad Ibrahim](https://x.com/eibrahim)
 
 ## License
 

@@ -3,10 +3,16 @@
 
 function ai() {
   if [[ -z "$*" ]]; then
-    echo "Usage: ai <natural language query>"
-    echo "Example: ai find all jpg files"
-    return 1
+    terminalai --help
+    return 0
   fi
+  # Pass through subcommands directly (not captured)
+  case "$1" in
+    model|setup|--help|-h)
+      terminalai "$@"
+      return $?
+      ;;
+  esac
   local cmd
   cmd=$(terminalai "$*")
   if [[ -n "$cmd" ]]; then
