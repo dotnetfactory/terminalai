@@ -18,7 +18,7 @@ find . -name "*.jpg" -size +1M
 
 ```bash
 # Install globally
-npm install -g terminalai
+npm install -g terminalai-app
 
 # Set up shell integration (creates the 'ai' command)
 terminalai setup

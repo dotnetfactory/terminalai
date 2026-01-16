@@ -1,5 +1,5 @@
 {
-  "name": "terminalai",
+  "name": "terminalai-app",
   "version": "1.0.0",
   "description": "AI-powered terminal command generator - type natural language, get shell commands",
   "main": "dist/index.js",
