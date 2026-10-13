@@ -69,9 +69,9 @@ The generated command appears in your terminal ready to execute. Press Enter to 
 
 ### API Key
 
-On first run, terminalai will prompt you for an API key and save it automatically.
+On first run, the tool will ask for an API endpoint (optional — press Enter to use the default OpenRouter endpoint) and an API key (optional — can be left blank for custom endpoints). Get a free key from [OpenRouter](https://openrouter.ai/keys) (takes 30 seconds). The free tier is sufficient for personal use.
 
-Get a free key from [OpenRouter](https://openrouter.ai/keys) (takes 30 seconds). The free tier is sufficient for personal use.
+You can also use any OpenAI-compatible API endpoint (e.g., OpenAI, Groq, or other providers). Configure it via the `OPENAI_API_URL` environment variable, or set it manually in the config file (`~/.config/terminalai/config.json` with the `apiUrl` field). The default endpoint is OpenRouter.
 
 ### Model Selection
 
@@ -96,6 +96,7 @@ Browse all models at: https://openrouter.ai/models
 
 | Variable | Description |
 |----------|-------------|
+| `OPENAI_API_URL` | Override API endpoint URL (default: OpenRouter) |
 | `OPENROUTER_API_KEY` | Override saved API key |
 | `TERMINALAI_MODEL` | Override saved model |
 | `TERMINALAI_SHELL` | Override detected shell (zsh, bash, fish) |

@@ -6,6 +6,9 @@ import {
   getApiKey,
   promptForApiKey,
   getModel,
+  getApiUrl,
+  DEFAULT_API_URL_BASE,
+  promptForApiUrl,
   promptForModel,
   saveModel,
   showModelHelp,
@@ -84,10 +87,18 @@ I build free dev tools. Follow for more: https://x.com/eibrahim
   // Detect shell from environment or default to zsh
   const shell = process.env.TERMINALAI_SHELL || process.env.SHELL?.split("/").pop() || "zsh";
 
-  // Get API key from env or config, prompt if not found
+  // Get API endpoint from env/config; if not openrouter/default and no key → skip key
+  let apiUrl = getApiUrl();
+  let isDefaultEndpoint = apiUrl === DEFAULT_API_URL_BASE || apiUrl.includes("openrouter");
+
+  // Get API key from env or config, prompt if needed
   let apiKey = getApiKey();
-  if (!apiKey) {
+  if (!apiKey && isDefaultEndpoint) {
     apiKey = await promptForApiKey();
+    apiUrl = await promptForApiUrl();
+    isDefaultEndpoint = apiUrl === DEFAULT_API_URL_BASE || apiUrl.includes("openrouter");
+  } else if (!apiKey) {
+    console.log("\nUsing custom endpoint without saved API key.\n");
   }
 
   // Get model from env or config, prompt if not found
@@ -97,7 +108,7 @@ I build free dev tools. Follow for more: https://x.com/eibrahim
   }
 
   try {
-    const command = await generateCommand(query, shell, apiKey, model);
+    const command = await generateCommand(query, shell, apiKey || "", model);
     // Output only the command - shell function will handle pre-filling
     console.log(command);
   } catch (error) {

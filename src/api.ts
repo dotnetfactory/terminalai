@@ -1,6 +1,7 @@
 import { buildPrompt } from "./prompt.js";
+import { getApiUrl, DEFAULT_API_URL_BASE } from "./config.js";
 
-const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
+const OPENROUTER_API_URL = DEFAULT_API_URL_BASE;
 
 interface OpenRouterResponse {
   choices: Array<{
@@ -52,7 +53,8 @@ export async function generateCommand(
 
   let response: Response;
   try {
-    response = await fetch(OPENROUTER_API_URL, {
+    const baseUrl = getApiUrl().endsWith('/chat/completions') ? getApiUrl() : `${getApiUrl()}/chat/completions`;
+    response = await fetch(baseUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

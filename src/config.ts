@@ -18,6 +18,7 @@ export const DEFAULT_MODEL = FREE_MODELS[0].id;
 interface Config {
   apiKey?: string;
   model?: string;
+  apiUrl?: string;
 }
 
 export function loadConfig(): Config {
@@ -71,6 +72,25 @@ export function saveModel(model: string): void {
   saveConfig(config);
 }
 
+export const DEFAULT_API_URL_BASE = "https://openrouter.ai/api/v1";
+
+export function getApiUrl(): string {
+  if (process.env.OPENAI_API_URL) {
+    return process.env.OPENAI_API_URL;
+  }
+  const config = loadConfig();
+  if (config.apiUrl) {
+    return config.apiUrl;
+  }
+  return DEFAULT_API_URL_BASE;
+}
+
+export function saveApiUrl(url: string): void {
+  const config = loadConfig();
+  config.apiUrl = url;
+  saveConfig(config);
+}
+
 function prompt(question: string): Promise<string> {
   const rl = readline.createInterface({
     input: process.stdin,
@@ -85,21 +105,33 @@ function prompt(question: string): Promise<string> {
   });
 }
 
-export async function promptForApiKey(): Promise<string> {
-  console.log("\nNo API key found. You need a free OpenRouter API key to use terminalai.");
+export async function promptForApiKey(): Promise<string | undefined> {
+  console.log("\nNo API key found. You can get a free OpenRouter API key to use terminalai.");
   console.log("Get one at: https://openrouter.ai/keys (takes 30 seconds)\n");
 
-  const apiKey = await prompt("Enter your OpenRouter API key: ");
+  const apiKey = await prompt("Enter your API key (leave blank to skip): ");
 
-  if (!apiKey) {
-    console.error("No API key provided. Exiting.");
-    process.exit(1);
+  if (apiKey.trim()) {
+    saveApiKey(apiKey.trim());
+    console.log("\nAPI key saved to ~/.config/terminalai/config.json\n");
+    return apiKey.trim();
   }
 
-  saveApiKey(apiKey);
-  console.log("\nAPI key saved to ~/.config/terminalai/config.json\n");
+  console.log("\nNo API key saved (left blank).\n");
+  return undefined;
+}
 
-  return apiKey;
+export async function promptForApiUrl(): Promise<string> {
+  console.log("\nAPI endpoint (OpenAI-compatible). Default: OpenRouter");
+  console.log(`Press Enter to use default: ${DEFAULT_API_URL_BASE}\n`);
+  const url = await prompt("Enter API endpoint URL (optional): ");
+  if (url.trim()) {
+    saveApiUrl(url.trim());
+    console.log("\nAPI endpoint saved.\n");
+    return url.trim();
+  }
+  console.log("\nUsing default endpoint.\n");
+  return DEFAULT_API_URL_BASE;
 }
 
 export async function promptForModel(): Promise<string> {
